@@ -1,325 +1,205 @@
-<h1 align="center">
-    <img alt="logo" src="https://oscimg.oschina.net/oscnet/up-d3d0a9303e11d522a06cd263f3079027715.png">
-</h1>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">RuoYi-Vue3-FastAPI</h1>
-<h4 align="center">基于RuoYi-Vue3+FastAPI前后端分离的快速开发框架</h4>
+<h1 align="center">AI Tavern</h1>
+
+<h3 align="center">基于 RuoYi-Vue3-FastAPI 二次开发的 AI 酒馆角色聊天系统</h3>
+
 <p align="center">
-    <a href="https://gitee.com/insistence2022/RuoYi-Vue3-FastAPI/stargazers">
-        <img alt="Gitee" src="https://gitee.com/insistence2022/RuoYi-Vue3-FastAPI/badge/star.svg?theme=dark">
-    </a>
-    <a href="https://github.com/insistence/RuoYi-Vue3-FastAPI">
-        <img alt="Github" src="https://img.shields.io/github/stars/insistence/RuoYi-Vue3-FastAPI?style=social">
-    </a>
-    <a href="https://github.com/insistence/RuoYi-Vue3-FastAPI/actions?query=branch%3Amaster+event%3Apush+workflow%3A%22%22Playwright+Tests%22%22">
-        <img alt="Playwright Tests" src="https://github.com/insistence/RuoYi-Vue3-FastAPI/workflows/Playwright Tests/badge.svg">
-    </a>
-    <a href="https://github.com/insistence/RuoYi-Vue3-FastAPI/actions?query=branch%3Amaster+event%3Apush+workflow%3A%22%22Ruff+Check%22%22">
-        <img alt="Ruff Check" src="https://github.com/insistence/RuoYi-Vue3-FastAPI/workflows/Ruff Check/badge.svg">
-    </a>
-    <a href="https://gitee.com/insistence2022/RuoYi-Vue3-FastAPI">
-        <img alt="project version" src="https://img.shields.io/badge/version-1.9.0-brightgreen.svg">
-    </a>
-    <a href="https://github.com/astral-sh/ruff">
-        <img alt="Ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json">
-    </a>
-    <a href="https://gitee.com/insistence2022/RuoYi-Vue3-FastAPI/blob/master/LICENSE">
-        <img alt="LICENSE" src="https://img.shields.io/github/license/mashape/apistatus.svg">
-    </a>
-    <img alt="node version" src="https://img.shields.io/badge/node-≥18-blue">
-    <img alt="python version" src="https://img.shields.io/badge/python-≥3.10-blue">
-    <img alt="mysql version" src="https://img.shields.io/badge/MySQL-≥5.7-blue">
-    <img alt="redis version" src="https://img.shields.io/badge/redis-≥6.2-blue">
+  <img alt="version" src="https://img.shields.io/badge/version-1.0.0-brightgreen">
+  <img alt="python" src="https://img.shields.io/badge/python-3.11-blue">
+  <img alt="node" src="https://img.shields.io/badge/node-20.x-blue">
+  <img alt="vue" src="https://img.shields.io/badge/vue-3.5.26-42b883">
+  <img alt="fastapi" src="https://img.shields.io/badge/FastAPI-0.128.2-009688">
+  <img alt="mysql" src="https://img.shields.io/badge/MySQL-8.0-orange">
+  <img alt="redis" src="https://img.shields.io/badge/Redis-7.x-red">
+  <img alt="DeepSeek" src="https://img.shields.io/badge/DeepSeek-v4--flash-purple">
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
-## 平台简介
+## 项目简介
 
-RuoYi-Vue3-FastAPI是一套全部开源的快速开发平台，毫无保留给个人及企业免费使用。
+AI Tavern 是在 `RuoYi-Vue3-FastAPI 1.9.0` 基础上二次开发的 AI 角色聊天后台系统。项目保留了若依体系里的用户管理、角色管理、菜单权限、日志管理等后台能力，并新增 AI 酒馆相关功能，用于角色管理、会话管理、对话记录存储、DeepSeek 模型接入和用户 Token / 金额额度管理。
 
-* 前端采用Vue3、Element Plus，基于<u>[RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)</u>前端项目修改。
-* 移动端采用uni-app、Vue3、Vite，内置tailwindcss，基于<u>[RuoYi-App](https://github.com/yangzongzhuan/RuoYi-App)</u>项目修改。
-* 后端采用FastAPI、sqlalchemy、MySQL（PostgreSQL）、Redis、OAuth2 & Jwt。
-* 权限认证使用OAuth2 & Jwt，支持多终端认证系统。
-* 支持加载动态权限菜单，多方式轻松权限控制。
-* Vue2版本：
-  * Gitte仓库地址：<https://gitee.com/insistence2022/RuoYi-Vue-FastAPI>
-  * GitHub仓库地址：<https://github.com/insistence/RuoYi-Vue-FastAPI>
-* 纯Python版本：
-  * Gitte仓库地址：<https://gitee.com/insistence2022/dash-fastapi-admin>
-  * GitHub仓库地址：<https://github.com/insistence/Dash-FastAPI-Admin>
-* 特别鸣谢：<u>[RuoYi-Vue3](https://github.com/yangzongzhuan/RuoYi-Vue3)</u>、<u>[RuoYi-App](https://github.com/yangzongzhuan/RuoYi-App)</u>
+当前版本重点面向网页端管理后台，移动端目录保留但暂不作为主要开发目标。
 
-## 内置功能
+## 当前能力
 
-1. 用户管理：用户是系统操作者，该功能主要完成系统用户配置。
-2. 角色管理：角色菜单权限分配、设置角色按机构进行数据范围权限划分。
-3. 菜单管理：配置系统菜单，操作权限，按钮权限标识等。
-4. 部门管理：配置系统组织机构（公司、部门、小组）。
-5. 岗位管理：配置系统用户所属担任职务。
-6. 字典管理：对系统中经常使用的一些较为固定的数据进行维护。
-7. 参数管理：对系统动态配置常用参数。
-8. 通知公告：系统通知公告信息发布维护。
-9. 操作日志：系统正常操作日志记录和查询；系统异常信息日志记录和查询。
-10. 登录日志：系统登录日志记录查询包含登录异常。
-11. 在线用户：当前系统中活跃用户状态监控。
-12. 定时任务：在线（添加、修改、删除）任务调度包含执行结果日志。
-13. 服务监控：监视当前系统CPU、内存、磁盘、堆栈等相关信息。
-14. 缓存监控：对系统的缓存信息查询，命令统计等。
-15. 在线构建器：拖动表单元素生成相应的HTML代码。
-16. 系统接口：根据业务代码自动生成相关的api接口文档。
-17. 代码生成：配置数据库表信息一键生成前后端代码（python、sql、vue、js），支持下载。
-18. AI管理：提供AI模型管理和AI对话功能。
+### AI 酒馆
 
-## 演示图
+1. 角色管理：创建和维护 AI 角色资料、提示词、状态等信息。
+2. 会话管理：查看和维护用户与角色的会话。
+3. 角色聊天：网页端可与角色进行连续对话。
+4. 对话记录：用户消息和模型回复写入 MySQL，便于后续审计和统计。
+5. 生成耗时：聊天消息展示模型生成耗时，单位为秒，支持小数。
+6. 上下文总结：支持会话摘要能力，减少长期聊天上下文压力。
 
-<table>
-    <tr>
-        <td>
-            <img alt="login" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/login.png">
-        </td>
-        <td>
-            <img alt="dashboard" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/dashboard.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="user" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/user.png">
-        </td>
-        <td>
-            <img alt="role" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/role.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="menu" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/menu.png">
-        </td>
-        <td>
-            <img alt="dept" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/dept.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt=""post src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/post.png">
-        </td>
-        <td>
-            <img alt="dict" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/dict.png">
-        </td>
-    </tr>  
-    <tr>
-        <td>
-            <img alt="config" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/config.png">
-        </td>
-        <td>
-            <img alt="notice" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/notice.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="operLog" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/operLog.png">
-        </td>
-        <td>
-            <img alt="loginLog" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/loginLog.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="online" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/online.png">
-        </td>
-        <td>
-            <img alt="job" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/job.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="server" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/server.png">
-        </td>
-        <td>
-            <img alt="cache" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/cache.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="cacheList" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/cacheList.png">
-        </td>
-        <td>
-            <img alt="form" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/form.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="api" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/api.png">
-        </td>
-        <td>
-            <img alt="gen" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/gen.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="aiModel" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/aiModel.png">
-        </td>
-        <td>
-            <img alt="aiChat" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/aiChat.png">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="profile" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/web/profile.png">
-        </td>
-    </tr>
-</table>
+### DeepSeek 接入
 
-<table>
-    <tr>
-        <td>
-            <img alt="applogin" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/app/login.png">
-        </td>
-        <td>
-            <img alt="appWorkbench" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/app/workbench.png">
-        </td>
-        <td>
-            <img alt="appProfile" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/vue3/app/profile.png">
-        </td>
-    </tr>
-</table>
+1. 使用 OpenAI SDK 兼容方式接入 DeepSeek。
+2. 默认模型：`deepseek-v4-flash`。
+3. 默认非思考模式：`DEEPSEEK_THINKING_ENABLED = false`。
+4. API Key 通过后端环境变量配置，不提交到 GitHub。
 
-## 在线体验
+### Token 与额度管理
 
-* *账号：admin*
-* *密码：admin123*
-* 演示地址：<a href="https://vfadmin.insistence.tech">vfadmin管理系统<a>
+1. 记录每次对话的 prompt tokens、completion tokens、total tokens。
+2. 记录缓存命中与未命中 token。
+3. 按 DeepSeek 计费规则估算人民币消耗。
+4. 后台提供 Token 消耗页面。
+5. 系统管理中提供用户 Token 设置页面。
+6. 支持按人民币额度设置每日、每月、总额度。
+7. 权限可由角色管理控制。
 
-## 项目开发及发布相关
+### 系统管理
 
-### 开发
+1. 用户管理：创建用户、修改用户、分配角色。
+2. 角色管理：配置角色菜单权限和按钮权限。
+3. 菜单管理：维护后台菜单、路由、权限标识。
+4. 用户 Token 设置：维护用户 AI 使用额度。
+5. 登录验证码：当前项目已取消登录验证码机制。
 
-```bash
-# 克隆项目
-git clone https://gitee.com/insistence2022/RuoYi-Vue3-FastAPI.git
+## 技术栈
 
-# 进入项目根目录
-cd RuoYi-Vue3-FastAPI
+### 后端
+
+- Python 3.11
+- FastAPI 0.128.2
+- SQLAlchemy 2.0.46
+- MySQL 8.0
+- Redis 7.x
+- OpenAI SDK 2.17.0
+- JWT / OAuth2
+
+### 前端
+
+- Vue 3.5.26
+- Vite 6.4.1
+- Element Plus 2.13.1
+- Pinia 3.0.4
+- Vue Router 4.6.4
+- Axios 1.13.5
+
+## 目录结构
+
+```text
+.
+├── docs                         # 项目文档
+├── ruoyi-fastapi-backend         # FastAPI 后端
+├── ruoyi-fastapi-frontend        # Vue3 网页端
+├── ruoyi-fastapi-app             # 移动端目录，当前暂不重点开发
+└── ruoyi-fastapi-test            # 测试目录
 ```
 
-#### 前端
+## 环境变量
+
+真实环境变量文件不会提交到 GitHub。首次部署或本地开发时，请复制模板后再填写自己的配置。
+
+后端：
 
 ```bash
-# 进入前端目录
-cd ruoyi-fastapi-frontend
-
-# 安装依赖
-npm install 或 yarn --registry=https://registry.npmmirror.com
-
-# 建议不要直接使用 cnpm 安装依赖，会有各种诡异的 bug。可以通过如下操作解决 npm 下载速度慢的问题
-npm install --registry=https://registry.npmmirror.com
-
-# 启动服务
-npm run dev 或 yarn dev
-```
-
-#### 移动端
-
-```bash
-# 进入移动端目录
-cd ruoyi-fastapi-app
-
-# 安装依赖
-npm install -g pnpm
-pnpm install
-
-# 启动 H5
-pnpm dev:h5
-
-# 启动微信小程序
-pnpm dev:mp-weixin
-```
-
-移动端详细文档请参考：[ruoyi-fastapi-app/README.md](./ruoyi-fastapi-app/README.md)
-
-#### 后端
-
-```bash
-# 进入后端目录
 cd ruoyi-fastapi-backend
-
-# 如果使用的是MySQL数据库，请执行以下命令安装项目依赖环境
-pip3 install -r requirements.txt
-# 如果使用的是PostgreSQL数据库，请执行以下命令安装项目依赖环境
-pip3 install -r requirements-pg.txt
-
-# 配置环境
-在.env.dev文件中配置开发环境的数据库和redis
-
-# 运行sql文件
-1.新建数据库ruoyi-fastapi(默认，可修改)
-2.如果使用的是MySQL数据库，使用命令或数据库连接工具运行sql文件夹下的ruoyi-fastapi.sql；如果使用的是PostgreSQL数据库，使用命令或数据库连接工具运行sql文件夹下的ruoyi-fastapi-pg.sql
-
-# 运行后端
-python3 app.py --env=dev
+cp .env.example .env.prod
 ```
 
-#### 访问
+前端：
 
 ```bash
-# 默认账号密码
-账号：admin
-密码：admin123
-
-# 浏览器访问
-地址：http://localhost:80
+cd ruoyi-fastapi-frontend
+cp .env.example .env.production
 ```
 
-### 发布
+需要重点填写：
 
-#### 前端
+```env
+DB_USERNAME = '你的数据库用户'
+DB_PASSWORD = '你的数据库密码'
+DB_DATABASE = 'ruoyi_fastapi'
+
+DEEPSEEK_API_KEY = '你的 DeepSeek API Key'
+DEEPSEEK_MODEL = 'deepseek-v4-flash'
+DEEPSEEK_THINKING_ENABLED = false
+```
+
+## 本地启动
+
+### 后端
 
 ```bash
-# 构建测试环境
-npm run build:stage 或 yarn build:stage
-
-# 构建生产环境
-npm run build:prod 或 yarn build:prod
+cd ruoyi-fastapi-backend
+python3.11 -m venv venv
+source venv/bin/activate
+pip install -r requirements-prod.txt
+python app.py --env=prod
 ```
 
-#### 后端
+Windows PowerShell 可使用：
+
+```powershell
+cd ruoyi-fastapi-backend
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements-prod.txt
+python app.py --env=prod
+```
+
+### 前端
 
 ```bash
-# 配置环境
-在.env.prod文件中配置生产环境的数据库和redis
-
-# 运行后端
-python3 app.py --env=prod
+cd ruoyi-fastapi-frontend
+npm install --registry=https://registry.npmmirror.com
+npm run dev
 ```
 
-### Docker Compose部署方式
-
-> ⚠️ **警告：** 默认未做数据持久化配置，请注意数据备份或自行配置持久化
-
-#### MySQL版本
+生产打包：
 
 ```bash
-docker compose -f docker-compose.my.yml up -d --build
+npm run build:prod
 ```
 
-#### PostgreSQL版本
+## 数据库初始化
 
-```bash
-docker compose -f docker-compose.pg.yml up -d --build
+首次部署时按顺序导入：
+
+```text
+ruoyi-fastapi-backend/sql/ruoyi-fastapi.sql
+ruoyi-fastapi-backend/sql/ai-tavern.sql
 ```
 
-## 交流与赞助
+注意：后续版本更新不要重复导入初始化 SQL，避免影响已有用户、角色、会话、聊天记录和 Token 消耗数据。后续数据库结构变化应使用增量 SQL。
 
-如果有对本项目及FastAPI感兴趣的朋友，欢迎加入知识星球一起交流学习，让我们一起变得更强。如果你觉得这个项目帮助到了你，你可以请作者喝杯咖啡表示鼓励☕。扫描下面微信二维码添加微信备注VF-Admin即可进群。
-<table>
-    <tr>
-        <td>
-            <img alt="zsxq" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/common/zsxq.jpg">
-        </td>
-        <td>
-            <img alt="zanzhu" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/common/zanzhu.jpg">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <img alt="wxcode" src="https://gitee.com/insistence2022/ruoyi-fastapi-pictures/raw/master/common/wxcode.jpg">
-        </td>
-    </tr>
-</table>
+## 部署文档
+
+推荐使用宝塔面板部署：
+
+- [宝塔 Python 项目管理器部署详细版](./docs/baota-python-manager-full-deploy.md)
+- [GitHub 初始上传与后续开发流程](./docs/github-initial-upload.md)
+
+## 服务器更新原则
+
+为了保证线上数据不丢失，后续升级版本时请遵守：
+
+1. 不删除 MySQL 数据库。
+2. 不重新创建 `ruoyi_fastapi` 数据库。
+3. 不重复导入 `ruoyi-fastapi.sql` 和 `ai-tavern.sql`。
+4. 不覆盖服务器上的 `.env.prod`。
+5. 先备份数据库，再上传新版代码。
+6. 如果有数据库变化，只执行增量 SQL。
+
+## 安全提醒
+
+不要把以下内容提交到 GitHub：
+
+```text
+.env.dev
+.env.prod
+.env.dockermy
+.env.dockerpg
+venv
+node_modules
+dist
+logs
+```
+
+如果 API Key 曾经在聊天记录、截图或仓库历史里明文出现，建议立即去对应平台重置 Key。
+
+## 许可
+
+本项目基于 RuoYi-Vue3-FastAPI 二次开发，遵循 MIT License。

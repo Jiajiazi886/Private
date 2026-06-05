@@ -12,6 +12,8 @@ GitHub 分支：main
 接口前缀：/prod-api
 域名：www.xn--kbrr2vyxjytebq4azkrrie.icu
 宝塔 Python 项目名：ai-tavern-backend
+数据库名：ruoyi_fastapi
+数据库用户名：ruoyi_fastapi
 ```
 
 本文只写一条部署路线：服务器从 GitHub 的 `main` 分支拉取最新代码，然后更新数据库、打包前端、重启后端。
@@ -88,32 +90,12 @@ nginx/1.24.x
 
 Python 必须是 3.11。
 
-## 4. 设置本次部署变量
+## 4. 创建备份目录
 
-把下面命令复制到宝塔终端执行。
-
-把 `你的数据库名`、`你的数据库用户` 改成你宝塔数据库里的真实值。
+执行：
 
 ```bash
-export PROJECT_DIR=/www/wwwroot/ai-tavern
-export BACKEND_DIR=/www/wwwroot/ai-tavern/ruoyi-fastapi-backend
-export FRONTEND_DIR=/www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
-export BACKUP_DIR=/www/backup/ai-tavern
-export DB_NAME=你的数据库名
-export DB_USER=你的数据库用户
-```
-
-例子：
-
-```bash
-export DB_NAME=ruoyi_fastapi
-export DB_USER=ruoyi_fastapi
-```
-
-创建备份目录：
-
-```bash
-mkdir -p $BACKUP_DIR
+mkdir -p /www/backup/ai-tavern
 ```
 
 ## 5. 备份后端生产配置
@@ -121,13 +103,13 @@ mkdir -p $BACKUP_DIR
 执行：
 
 ```bash
-cp $BACKEND_DIR/.env.prod $BACKUP_DIR/.env.prod.$(date +%F-%H%M%S).bak
+cp /www/wwwroot/ai-tavern/ruoyi-fastapi-backend/.env.prod /www/backup/ai-tavern/.env.prod.$(date +%F-%H%M%S).bak
 ```
 
 检查备份：
 
 ```bash
-ls -lh $BACKUP_DIR
+ls -lh /www/backup/ai-tavern
 ```
 
 ## 6. 备份数据库
@@ -135,7 +117,7 @@ ls -lh $BACKUP_DIR
 执行：
 
 ```bash
-mysqldump -u$DB_USER -p $DB_NAME > $BACKUP_DIR/$DB_NAME.$(date +%F-%H%M%S).sql
+mysqldump -uruoyi_fastapi -p ruoyi_fastapi > /www/backup/ai-tavern/ruoyi_fastapi.$(date +%F-%H%M%S).sql
 ```
 
 终端提示输入密码时，输入你的数据库密码。
@@ -143,7 +125,7 @@ mysqldump -u$DB_USER -p $DB_NAME > $BACKUP_DIR/$DB_NAME.$(date +%F-%H%M%S).sql
 检查备份：
 
 ```bash
-ls -lh $BACKUP_DIR
+ls -lh /www/backup/ai-tavern
 ```
 
 你应该看到一个 `.sql` 文件。
@@ -158,13 +140,13 @@ tar --exclude='ai-tavern/ruoyi-fastapi-frontend/node_modules' \
     --exclude='ai-tavern/ruoyi-fastapi-frontend/dist' \
     --exclude='ai-tavern/ruoyi-fastapi-backend/__pycache__' \
     --exclude='ai-tavern/ruoyi-fastapi-backend/logs' \
-    -czf $BACKUP_DIR/ai-tavern-code.$(date +%F-%H%M%S).tar.gz ai-tavern
+    -czf /www/backup/ai-tavern/ai-tavern-code.$(date +%F-%H%M%S).tar.gz ai-tavern
 ```
 
 检查备份：
 
 ```bash
-ls -lh $BACKUP_DIR
+ls -lh /www/backup/ai-tavern
 ```
 
 你应该看到一个 `.tar.gz` 文件。
@@ -190,7 +172,7 @@ ss -lntp | grep 9099
 执行：
 
 ```bash
-cd $PROJECT_DIR
+cd /www/wwwroot/ai-tavern
 git pull origin main
 ```
 
@@ -209,7 +191,7 @@ git log -1 --oneline
 确认增量 SQL 文件存在：
 
 ```bash
-ls $BACKEND_DIR/sql/update-v2-ai-tavern-chat.sql
+ls /www/wwwroot/ai-tavern/ruoyi-fastapi-backend/sql/update-v2-ai-tavern-chat.sql
 ```
 
 ## 10. 检查后端生产配置
@@ -217,7 +199,7 @@ ls $BACKEND_DIR/sql/update-v2-ai-tavern-chat.sql
 执行：
 
 ```bash
-cd $BACKEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-backend
 cat .env.prod
 ```
 
@@ -234,9 +216,9 @@ APP_WORKERS = 1
 DB_TYPE = 'mysql'
 DB_HOST = '127.0.0.1'
 DB_PORT = 3306
-DB_USERNAME = '你的数据库用户'
+DB_USERNAME = 'ruoyi_fastapi'
 DB_PASSWORD = '你的数据库密码'
-DB_DATABASE = '你的数据库名'
+DB_DATABASE = 'ruoyi_fastapi'
 DB_ECHO = false
 
 REDIS_HOST = '127.0.0.1'
@@ -257,8 +239,8 @@ DEEPSEEK_MAX_TOKENS = 2048
 执行：
 
 ```bash
-cd $BACKEND_DIR
-mysql -u$DB_USER -p $DB_NAME < sql/update-v2-ai-tavern-chat.sql
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-backend
+mysql -uruoyi_fastapi -p ruoyi_fastapi < sql/update-v2-ai-tavern-chat.sql
 ```
 
 输入数据库密码。
@@ -266,10 +248,10 @@ mysql -u$DB_USER -p $DB_NAME < sql/update-v2-ai-tavern-chat.sql
 执行完检查四个字段：
 
 ```bash
-mysql -u$DB_USER -p $DB_NAME -e "SHOW COLUMNS FROM ai_conversation LIKE 'conversation_prompt';"
-mysql -u$DB_USER -p $DB_NAME -e "SHOW COLUMNS FROM ai_conversation LIKE 'forced_memory';"
-mysql -u$DB_USER -p $DB_NAME -e "SHOW COLUMNS FROM ai_message LIKE 'is_edited';"
-mysql -u$DB_USER -p $DB_NAME -e "SHOW COLUMNS FROM ai_message LIKE 'update_time';"
+mysql -uruoyi_fastapi -p ruoyi_fastapi -e "SHOW COLUMNS FROM ai_conversation LIKE 'conversation_prompt';"
+mysql -uruoyi_fastapi -p ruoyi_fastapi -e "SHOW COLUMNS FROM ai_conversation LIKE 'forced_memory';"
+mysql -uruoyi_fastapi -p ruoyi_fastapi -e "SHOW COLUMNS FROM ai_message LIKE 'is_edited';"
+mysql -uruoyi_fastapi -p ruoyi_fastapi -e "SHOW COLUMNS FROM ai_message LIKE 'update_time';"
 ```
 
 四个字段都能查到，数据库更新完成。
@@ -279,7 +261,7 @@ mysql -u$DB_USER -p $DB_NAME -e "SHOW COLUMNS FROM ai_message LIKE 'update_time'
 进入后端目录：
 
 ```bash
-cd $BACKEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-backend
 ```
 
 进入宝塔 Python 项目虚拟环境：
@@ -319,7 +301,7 @@ backend deps ok
 进入前端目录：
 
 ```bash
-cd $FRONTEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
 ```
 
 安装依赖：
@@ -337,7 +319,7 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
 检查打包结果：
 
 ```bash
-ls $FRONTEND_DIR/dist
+ls /www/wwwroot/ai-tavern/ruoyi-fastapi-frontend/dist
 ```
 
 应该能看到：
@@ -436,7 +418,7 @@ http://www.xn--kbrr2vyxjytebq4azkrrie.icu
 终端查看后端日志：
 
 ```bash
-cd $BACKEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-backend
 tail -n 100 logs/*.log
 ```
 
@@ -463,7 +445,7 @@ ss -lntp | grep 9099
 执行：
 
 ```bash
-cd $BACKEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-backend
 unset _BT_PROJECT_ENV && source /www/server/panel/script/btpyprojectenv.sh ai-tavern-backend
 source /www/server/python_project/vhost/env/ai-tavern-backend.env
 pip install -r requirements-prod.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
@@ -478,7 +460,7 @@ pip install -r requirements-prod.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 执行：
 
 ```bash
-cd $FRONTEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
 NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
 ```
 
@@ -502,28 +484,21 @@ systemctl reload nginx
 熟悉流程后，更新第二版直接按下面执行。
 
 ```bash
-export PROJECT_DIR=/www/wwwroot/ai-tavern
-export BACKEND_DIR=/www/wwwroot/ai-tavern/ruoyi-fastapi-backend
-export FRONTEND_DIR=/www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
-export BACKUP_DIR=/www/backup/ai-tavern
-export DB_NAME=你的数据库名
-export DB_USER=你的数据库用户
+mkdir -p /www/backup/ai-tavern
+cp /www/wwwroot/ai-tavern/ruoyi-fastapi-backend/.env.prod /www/backup/ai-tavern/.env.prod.$(date +%F-%H%M%S).bak
+mysqldump -uruoyi_fastapi -p ruoyi_fastapi > /www/backup/ai-tavern/ruoyi_fastapi.$(date +%F-%H%M%S).sql
 
-mkdir -p $BACKUP_DIR
-cp $BACKEND_DIR/.env.prod $BACKUP_DIR/.env.prod.$(date +%F-%H%M%S).bak
-mysqldump -u$DB_USER -p $DB_NAME > $BACKUP_DIR/$DB_NAME.$(date +%F-%H%M%S).sql
-
-cd $PROJECT_DIR
+cd /www/wwwroot/ai-tavern
 git pull origin main
 
-cd $BACKEND_DIR
-mysql -u$DB_USER -p $DB_NAME < sql/update-v2-ai-tavern-chat.sql
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-backend
+mysql -uruoyi_fastapi -p ruoyi_fastapi < sql/update-v2-ai-tavern-chat.sql
 
 unset _BT_PROJECT_ENV && source /www/server/panel/script/btpyprojectenv.sh ai-tavern-backend
 source /www/server/python_project/vhost/env/ai-tavern-backend.env
 pip install -r requirements-prod.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-cd $FRONTEND_DIR
+cd /www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
 npm install --registry=https://registry.npmmirror.com
 NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
 

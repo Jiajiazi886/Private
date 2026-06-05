@@ -54,6 +54,21 @@ export function createConversation(data) {
   });
 }
 
+export function getConversation(id) {
+  return request({
+    url: `/ai/tavern/conversations/${id}`,
+    method: "get",
+  });
+}
+
+export function updateConversation(id, data) {
+  return request({
+    url: `/ai/tavern/conversations/${id}`,
+    method: "put",
+    data,
+  });
+}
+
 export function delConversation(id) {
   return request({
     url: `/ai/tavern/conversations/${id}`,
@@ -78,6 +93,14 @@ export function sendChat(data) {
       repeatSubmit: false,
       interval: 500,
     },
+  });
+}
+
+export function updateMessage(id, data) {
+  return request({
+    url: `/ai/tavern/messages/${id}`,
+    method: "put",
+    data,
   });
 }
 

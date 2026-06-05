@@ -15,6 +15,8 @@ from module_ai_tavern.entity.vo.tavern_vo import (
     ChatSendModel,
     ConversationCreateModel,
     ConversationQueryModel,
+    ConversationUpdateModel,
+    MessageUpdateModel,
     MessageQueryModel,
     SummaryLogModel,
     TokenUsageModel,
@@ -120,6 +122,29 @@ async def delete_conversation(
     return ResponseUtil.success(msg=result.message)
 
 
+@tavern_controller.get('/conversations/{conversation_id}', summary='获取会话详情')
+async def get_conversation(
+    request: Request,
+    conversation_id: Annotated[int, Path()],
+    query_db: Annotated[AsyncSession, DBSessionDependency()],
+    current_user: Annotated[CurrentUserModel, CurrentUserDependency()],
+) -> Response:
+    result = await TavernService.get_conversation_detail(query_db, current_user.user.user_id, conversation_id)
+    return ResponseUtil.success(data=result)
+
+
+@tavern_controller.put('/conversations/{conversation_id}', summary='更新会话设置', response_model=ResponseBaseModel)
+async def update_conversation(
+    request: Request,
+    conversation_id: Annotated[int, Path()],
+    data: ConversationUpdateModel,
+    query_db: Annotated[AsyncSession, DBSessionDependency()],
+    current_user: Annotated[CurrentUserModel, CurrentUserDependency()],
+) -> Response:
+    result = await TavernService.update_conversation(query_db, current_user.user.user_id, conversation_id, data)
+    return ResponseUtil.success(msg=result.message)
+
+
 @tavern_controller.get('/conversations/{conversation_id}/messages', summary='获取会话消息')
 async def get_messages(
     request: Request,
@@ -128,6 +153,18 @@ async def get_messages(
     current_user: Annotated[CurrentUserModel, CurrentUserDependency()],
 ) -> Response:
     result = await TavernService.get_conversation_messages(query_db, current_user.user.user_id, conversation_id)
+    return ResponseUtil.success(data=result)
+
+
+@tavern_controller.put('/messages/{message_id}', summary='编辑会话消息')
+async def update_message(
+    request: Request,
+    message_id: Annotated[int, Path()],
+    data: MessageUpdateModel,
+    query_db: Annotated[AsyncSession, DBSessionDependency()],
+    current_user: Annotated[CurrentUserModel, CurrentUserDependency()],
+) -> Response:
+    result = await TavernService.update_message(query_db, current_user.user.user_id, message_id, data)
     return ResponseUtil.success(data=result)
 
 

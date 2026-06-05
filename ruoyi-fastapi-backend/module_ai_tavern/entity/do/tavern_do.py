@@ -35,6 +35,8 @@ class AiConversation(Base):
     character_id = Column(BigInteger, nullable=False, index=True)
     title = Column(String(200))
     summary = Column(Text)
+    conversation_prompt = Column(Text)
+    forced_memory = Column(Text)
     summary_version = Column(Integer, default=0, server_default='0')
     summary_turn_count = Column(Integer, default=0, server_default='0')
     last_summarized_message_id = Column(BigInteger)
@@ -64,7 +66,9 @@ class AiMessage(Base):
     audio_url = Column(Text)
     audio_status = Column(String(20), default='none', server_default='none')
     voice_profile_id = Column(BigInteger)
+    is_edited = Column(Boolean, default=False, server_default='0')
     create_time = Column(DateTime, default=datetime.now, index=True)
+    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
 class AiTokenUsage(Base):

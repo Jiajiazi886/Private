@@ -107,6 +107,21 @@ class TavernDao:
         return conversation
 
     @classmethod
+    async def get_user_message(cls, db: AsyncSession, user_id: int, message_id: int) -> AiMessage | None:
+        return (
+            (
+                await db.execute(
+                    select(AiMessage).where(
+                        AiMessage.id == message_id,
+                        AiMessage.user_id == user_id,
+                    )
+                )
+            )
+            .scalars()
+            .first()
+        )
+
+    @classmethod
     async def delete_conversation(cls, db: AsyncSession, conversation_id: int, user_id: int | None = None) -> None:
         await db.execute(
             update(AiConversation)

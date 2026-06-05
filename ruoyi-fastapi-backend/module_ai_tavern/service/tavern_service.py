@@ -23,6 +23,8 @@ from module_ai_tavern.entity.vo.tavern_vo import (
     ChatSendModel,
     ConversationCreateModel,
     ConversationQueryModel,
+    ConversationUpdateModel,
+    MessageUpdateModel,
     MessageQueryModel,
     TokenUsageQueryModel,
     UserTokenSettingQueryModel,
@@ -149,6 +151,7 @@ class TavernService:
             user_id=user_id,
             character_id=data.character_id,
             title=data.title or f'和{character.name}的对话',
+            conversation_prompt=data.conversation_prompt,
             create_time=datetime.now(),
             update_time=datetime.now(),
         )
@@ -186,6 +189,38 @@ class TavernService:
         return CrudResponseModel(is_success=True, message='删除成功')
 
     @classmethod
+    async def get_conversation_detail(cls, db: AsyncSession, user_id: int, conversation_id: int) -> dict[str, Any]:
+        conversation = await TavernDao.get_user_conversation(db, user_id, conversation_id)
+        if not conversation:
+            raise ServiceException(message='会话不存在或无权限访问')
+        character = await TavernDao.get_character(db, conversation.character_id)
+        result = CamelCaseUtil.transform_result(conversation)
+        result['characterName'] = character.name if character else None
+        return result
+
+    @classmethod
+    async def update_conversation(
+        cls, db: AsyncSession, user_id: int, conversation_id: int, data: ConversationUpdateModel
+    ) -> CrudResponseModel:
+        conversation = await TavernDao.get_user_conversation(db, user_id, conversation_id)
+        if not conversation:
+            raise ServiceException(message='会话不存在或无权限访问')
+        if data.title is not None:
+            conversation.title = data.title
+        if data.summary is not None:
+            conversation.summary = data.summary
+            conversation.summary_version = (conversation.summary_version or 0) + 1
+            conversation.last_summary_time = datetime.now()
+            conversation.summary_status = 'idle'
+        if data.conversation_prompt is not None:
+            conversation.conversation_prompt = data.conversation_prompt
+        if data.forced_memory is not None:
+            conversation.forced_memory = data.forced_memory
+        conversation.update_time = datetime.now()
+        await db.commit()
+        return CrudResponseModel(is_success=True, message='保存成功')
+
+    @classmethod
     async def list_messages(cls, db: AsyncSession, query: MessageQueryModel, current_user_id: int | None = None) -> Any:
         if current_user_id and not query.user_id:
             query.user_id = current_user_id
@@ -203,6 +238,23 @@ class TavernService:
             if item.get('id') in latency_map:
                 item['latencyMs'] = latency_map[item['id']]
         return result
+
+    @classmethod
+    async def update_message(
+        cls, db: AsyncSession, user_id: int, message_id: int, data: MessageUpdateModel
+    ) -> dict[str, Any]:
+        message = await TavernDao.get_user_message(db, user_id, message_id)
+        if not message:
+            raise ServiceException(message='消息不存在或无权限访问')
+        conversation = await TavernDao.get_user_conversation(db, user_id, message.conversation_id)
+        if not conversation:
+            raise ServiceException(message='会话不存在或无权限访问')
+        message.content = data.content
+        message.is_edited = True
+        message.update_time = datetime.now()
+        conversation.update_time = datetime.now()
+        await db.commit()
+        return CamelCaseUtil.transform_result(message)
 
     @classmethod
     async def send_chat(cls, db: AsyncSession, user_id: int, data: ChatSendModel) -> dict[str, Any]:
@@ -402,6 +454,15 @@ class TavernService:
         cls, db: AsyncSession, conversation: AiConversation, character: AiCharacter, user_input: str
     ) -> list[dict[str, str]]:
         messages = [{'role': 'system', 'content': build_character_system_prompt(character)}]
+        if conversation.conversation_prompt:
+            messages.append({'role': 'system', 'content': f'【本次会话专属提示词】\n{conversation.conversation_prompt}'})
+        if conversation.forced_memory:
+            messages.append(
+                {
+                    'role': 'system',
+                    'content': f'【强制记忆】以下内容必须作为长期事实记住，并在后续回复中保持一致：\n{conversation.forced_memory}',
+                }
+            )
         if conversation.summary:
             messages.append({'role': 'system', 'content': f'【长期剧情摘要】\n{conversation.summary}'})
         recent = await TavernDao.recent_messages(db, conversation.id, AiTavernConfig.ai_recent_message_limit)

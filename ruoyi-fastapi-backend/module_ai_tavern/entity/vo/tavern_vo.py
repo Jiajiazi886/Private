@@ -38,6 +38,7 @@ class CharacterQueryModel(TavernBaseModel):
 class ConversationCreateModel(TavernBaseModel):
     character_id: int
     title: str | None = None
+    conversation_prompt: str | None = None
 
 
 class ConversationQueryModel(TavernBaseModel):
@@ -47,6 +48,13 @@ class ConversationQueryModel(TavernBaseModel):
     character_id: int | None = None
     title: str | None = None
     status: Literal['0', '1'] | None = None
+
+
+class ConversationUpdateModel(TavernBaseModel):
+    title: str | None = Field(default=None, max_length=200)
+    summary: str | None = None
+    conversation_prompt: str | None = None
+    forced_memory: str | None = None
 
 
 class MessageQueryModel(TavernBaseModel):
@@ -70,11 +78,17 @@ class MessageModel(TavernBaseModel):
     completion_tokens: int | None = 0
     total_tokens: int | None = 0
     audio_status: str | None = None
+    is_edited: bool | None = False
     create_time: datetime | None = None
+    update_time: datetime | None = None
 
 
 class ChatSendModel(TavernBaseModel):
     conversation_id: int
+    content: str = Field(min_length=1)
+
+
+class MessageUpdateModel(TavernBaseModel):
     content: str = Field(min_length=1)
 
 

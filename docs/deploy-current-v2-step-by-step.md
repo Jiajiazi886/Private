@@ -298,7 +298,9 @@ backend deps ok
 
 ## 13. 打包前端
 
-进入前端目录：
+服务器内存够时，在服务器宝塔终端执行这一节。
+
+进入服务器前端目录：
 
 ```bash
 cd /www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
@@ -329,7 +331,87 @@ index.html
 static
 ```
 
-## 14. 检查 Nginx 配置
+## 14. 本地 Windows 打包后上传到服务器
+
+你现在是在本地 Windows PowerShell 里打包，所以不要执行这个 Linux 写法：
+
+```bash
+NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
+```
+
+PowerShell 里要执行下面这套命令。
+
+进入本地前端目录：
+
+```powershell
+cd D:\cc\cc\jiuba\RuoYi-Vue3-FastAPI-1.9.0\RuoYi-Vue3-FastAPI-1.9.0\ruoyi-fastapi-frontend
+```
+
+安装依赖：
+
+```powershell
+npm install --registry=https://registry.npmmirror.com
+```
+
+设置 Node 打包内存：
+
+```powershell
+$env:NODE_OPTIONS="--max-old-space-size=4096"
+```
+
+打包：
+
+```powershell
+npm run build:prod
+```
+
+打包成功后，本地会生成这个目录：
+
+```text
+D:\cc\cc\jiuba\RuoYi-Vue3-FastAPI-1.9.0\RuoYi-Vue3-FastAPI-1.9.0\ruoyi-fastapi-frontend\dist
+```
+
+里面应该有：
+
+```text
+index.html
+static
+```
+
+然后打开宝塔面板：
+
+```text
+宝塔面板 -> 文件
+```
+
+进入服务器目录：
+
+```text
+/www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
+```
+
+先把服务器旧的 `dist` 改名备份：
+
+```text
+dist -> dist.bak
+```
+
+再把本地打包出来的 `dist` 文件夹上传到：
+
+```text
+/www/wwwroot/ai-tavern/ruoyi-fastapi-frontend/dist
+```
+
+上传完成后，服务器目录必须是：
+
+```text
+/www/wwwroot/ai-tavern/ruoyi-fastapi-frontend/dist/index.html
+/www/wwwroot/ai-tavern/ruoyi-fastapi-frontend/dist/static
+```
+
+注意：本地打包上传只替代第 13 步。第 9 到第 12 步的拉代码、数据库增量 SQL、后端依赖仍然要在服务器执行。
+
+## 15. 检查 Nginx 配置
 
 执行：
 
@@ -350,7 +432,7 @@ test is successful
 systemctl reload nginx
 ```
 
-## 15. 启动后端
+## 16. 启动后端
 
 打开宝塔面板：
 
@@ -366,7 +448,7 @@ ss -lntp | grep 9099
 
 能看到 `9099` 代表后端已启动。
 
-## 16. 检查后端接口
+## 17. 检查后端接口
 
 执行：
 
@@ -384,7 +466,7 @@ curl -I http://www.xn--kbrr2vyxjytebq4azkrrie.icu
 
 看到 `HTTP/1.1 200 OK` 代表前端可访问。
 
-## 17. 浏览器验证
+## 18. 浏览器验证
 
 打开：
 
@@ -407,7 +489,7 @@ http://www.xn--kbrr2vyxjytebq4azkrrie.icu
 10. Token 消耗页面能看到记录。
 ```
 
-## 18. 更新失败时看日志
+## 19. 更新失败时看日志
 
 查看宝塔 Python 项目日志：
 
@@ -428,9 +510,9 @@ tail -n 100 logs/*.log
 tail -n 100 /www/wwwlogs/www.xn--kbrr2vyxjytebq4azkrrie.icu.error.log
 ```
 
-## 19. 常见错误处理
+## 20. 常见错误处理
 
-### 19.1 登录提示 502
+### 20.1 登录提示 502
 
 执行：
 
@@ -440,7 +522,7 @@ ss -lntp | grep 9099
 
 没有输出时，去宝塔 Python 项目管理器启动 `ai-tavern-backend`。
 
-### 19.2 提示 `No module named uvicorn`
+### 20.2 提示 `No module named uvicorn`
 
 执行：
 
@@ -451,20 +533,23 @@ source /www/server/python_project/vhost/env/ai-tavern-backend.env
 pip install -r requirements-prod.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### 19.3 提示 `cannot import name Literal`
+### 20.3 提示 `cannot import name Literal`
 
 宝塔 Python 项目管理器里把项目 Python 版本改成 3.11。
 
-### 19.4 前端打包提示内存不足
+### 20.4 前端打包提示内存不足
 
-执行：
+服务器前端打包内存不足时，按第 14 步在本地 Windows 打包，然后上传 `dist`。
 
-```bash
-cd /www/wwwroot/ai-tavern/ruoyi-fastapi-frontend
-NODE_OPTIONS="--max-old-space-size=4096" npm run build:prod
+本地 PowerShell 命令是：
+
+```powershell
+cd D:\cc\cc\jiuba\RuoYi-Vue3-FastAPI-1.9.0\RuoYi-Vue3-FastAPI-1.9.0\ruoyi-fastapi-frontend
+$env:NODE_OPTIONS="--max-old-space-size=4096"
+npm run build:prod
 ```
 
-### 19.5 页面样式没变化
+### 20.5 页面样式没变化
 
 浏览器执行强制刷新：
 
@@ -479,7 +564,7 @@ nginx -t
 systemctl reload nginx
 ```
 
-## 20. 最短命令清单
+## 21. 最短命令清单
 
 熟悉流程后，更新第二版直接按下面执行。
 
